@@ -1,0 +1,35 @@
+# --- Python / venv ---
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# --- Ultralytics / YOLO outputs & weights ---
+runs/
+*.pt
+*.onnx
+*.engine
+*.trt
+*.ncnn
+*.mlmodel
+
+# --- VS Code / IDE ---
+.vscode/
+.idea/
+
+# --- OS junk ---
+.DS_Store
+Thumbs.db
+
+# sample videos
+*.mp4
+*.mov
+*.avi
