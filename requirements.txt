@@ -1,0 +1,4 @@
+do some pip installs fella
+
+ultralytics
+opencv-python
