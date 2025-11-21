@@ -220,6 +220,9 @@ class MCAPFoxgloveCompressedVideoSource(FrameSource):
         self._decoder = None        # PyAV decoder for h264/hevc
         self._codec_name = None     # 'h264', 'hevc', or 'jpeg'
 
+        self.recording_start_ns = None
+        self.last_log_time_ns = None
+
     def _build_msg_class(self, schema) -> None:
         """
         Build dynamic protobuf message class for schema.name using FileDescriptorSet
@@ -349,6 +352,7 @@ class MCAPFoxgloveCompressedVideoSource(FrameSource):
         # Compute start + preroll
         stats = summary.statistics
         rec_start_ns = getattr(stats, "message_start_time", None)
+        self.recording_start_ns = rec_start_ns
         start_ns = None
         if self.start_abs_ns is not None:
             start_ns = int(self.start_abs_ns)
@@ -380,6 +384,7 @@ class MCAPFoxgloveCompressedVideoSource(FrameSource):
         # Parse protobuf message
         m = self._Msg()
         m.ParseFromString(msg.data)
+        self.last_log_time_ns = msg.log_time
         fmt = getattr(m, "format", "") or ""
         payload = bytes(getattr(m, "data", b"") or b"")
 
