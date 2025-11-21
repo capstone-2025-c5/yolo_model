@@ -1,7 +1,4 @@
-# --- Python / venv ---
-.venv/
-venv/
-env/
+# --- Python basics ---
 __pycache__/
 *.py[cod]
 *.pyo
@@ -10,28 +7,51 @@ __pycache__/
 *.egg-info/
 .eggs/
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
 .ipynb_checkpoints/
 
-# --- Ultralytics / YOLO outputs & weights ---
-runs/
-*.pt
-*.onnx
-*.engine
-*.trt
-*.ncnn
-*.mlmodel
+# --- Virtual envs ---
+.venv/
+venv/
+env/
 
-# --- VS Code / IDE ---
-.vscode/
-.idea/
+# --- Build / packaging ---
+build/
+dist/
+*.whl
 
-# --- OS junk ---
+# --- Logs / temp ---
+*.log
+*.tmp
+*.temp
+
+# --- OS cruft ---
 .DS_Store
 Thumbs.db
 
-# sample videos
-*.mp4
-*.mov
-*.avi
+# --- IDE ---
+.vscode/
+.idea/
+*.code-workspace
 
+# --- Data + outputs (generated locally) ---
+out/
 *.mcap
+*.pb
+*.csv
+
+# If you keep raw recordings locally, ignore them:
+captures/
+# (Remove this if you WANT captures/ checked in, or replace with a size-limited policy.)
+
+# --- Model weights / artifacts (big files) ---
+*.pt
+*.onnx
+*.engine
+*.tflite
+
+# --- Protobuf / MCAP tooling scratch (keep your generated plane_detection_pb2.py) ---
+# If you generate extra files alongside the pb2, ignore them:
+third_party/protos_py/*.pyc
+third_party/protos_py/__pycache__/
