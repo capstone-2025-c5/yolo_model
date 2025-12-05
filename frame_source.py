@@ -121,58 +121,58 @@ class OpenCVCameraFrameSource(FrameSource):
             self.cap.release()
             self.cap = None
 
-# -----------------------------
-# DXCam: Window-handle source (no GStreamer)
-# -----------------------------
-import numpy as np
-import dxcam
-
-class DXCamWindowFrameSource(FrameSource):
-    def __init__(self, title_contains: str, fps: int = 30):
-        self.title_contains = title_contains
-        self.fps = fps
-        self.camera = None
-        self.hwnd = None
-        self.region = None
-
-    def open(self) -> bool:
-        self.hwnd = find_window_handle(self.title_contains)
-        if not self.hwnd:
-            raise RuntimeError(f"Could not find visible window containing: {self.title_contains!r}")
-        bring_window_to_front(self.hwnd)
-
-        user32 = ctypes.windll.user32
-        rect = wt.RECT()
-        user32.GetClientRect(wt.HWND(self.hwnd), ctypes.byref(rect))
-        pt = wt.POINT(0, 0)
-        user32.ClientToScreen(wt.HWND(self.hwnd), ctypes.byref(pt))
-        left, top = pt.x, pt.y
-        width = rect.right - rect.left
-        height = rect.bottom - rect.top
-        self.region = (left, top, left + width, top + height)
-
-        self.camera = dxcam.create(output_idx=0, max_buffer_len=1)
-        self.camera.start(region=self.region, target_fps=self.fps)
-        return True
-
-    def read(self):
-        if not self.camera:
-            return False, None
-        frame = self.camera.get_latest_frame()
-        if frame is None:
-            return False, None
-        if frame.ndim == 3:
-            if frame.shape[-1] == 4:
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)
-            elif frame.shape[-1] == 3:
-                frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-        return True, frame.copy(order="C")
-
-    def release(self):
-        if self.camera:
-            self.camera.stop()
-            self.camera = None
-
+# # -----------------------------
+# # DXCam: Window-handle source (no GStreamer)
+# # -----------------------------
+# import numpy as np
+# import dxcam
+#
+# class DXCamWindowFrameSource(FrameSource):
+#     def __init__(self, title_contains: str, fps: int = 30):
+#         self.title_contains = title_contains
+#         self.fps = fps
+#         self.camera = None
+#         self.hwnd = None
+#         self.region = None
+#
+#     def open(self) -> bool:
+#         self.hwnd = find_window_handle(self.title_contains)
+#         if not self.hwnd:
+#             raise RuntimeError(f"Could not find visible window containing: {self.title_contains!r}")
+#         bring_window_to_front(self.hwnd)
+#
+#         user32 = ctypes.windll.user32
+#         rect = wt.RECT()
+#         user32.GetClientRect(wt.HWND(self.hwnd), ctypes.byref(rect))
+#         pt = wt.POINT(0, 0)
+#         user32.ClientToScreen(wt.HWND(self.hwnd), ctypes.byref(pt))
+#         left, top = pt.x, pt.y
+#         width = rect.right - rect.left
+#         height = rect.bottom - rect.top
+#         self.region = (left, top, left + width, top + height)
+#
+#         self.camera = dxcam.create(output_idx=0, max_buffer_len=1)
+#         self.camera.start(region=self.region, target_fps=self.fps)
+#         return True
+#
+#     def read(self):
+#         if not self.camera:
+#             return False, None
+#         frame = self.camera.get_latest_frame()
+#         if frame is None:
+#             return False, None
+#         if frame.ndim == 3:
+#             if frame.shape[-1] == 4:
+#                 frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)
+#             elif frame.shape[-1] == 3:
+#                 frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+#         return True, frame.copy(order="C")
+#
+#     def release(self):
+#         if self.camera:
+#             self.camera.stop()
+#             self.camera = None
+#
 # -----------------------------
 # MCAP foxglove.CompressedVideo (protobuf) with seek + H264/H265/JPEG decode
 # -----------------------------
